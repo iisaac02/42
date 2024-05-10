@@ -1,111 +1,46 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ide-la-f <ide-la-f@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/02 21:10:42 by ide-la-f          #+#    #+#             */
-/*   Updated: 2023/12/07 16:40:01 by ide-la-f         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include <stdlib.h>
 
-//Separa una cadena en palabras usando el carácter c como separador
-//clerIncluir todas las funciones al compilar
-
-#include "libft.h"
-//#include <stdio.h>
-
-int	ft_count(char const *s, char c)
+char	*ft_strncpy(char *s1, char *s2, int n)
 {
-	int	i;
-	int	j;
+	int	i = -1;
 
-	i = 0;
-	j = 0;
-	while (s[i])
-	{
-		if ((s[i] != c) && ((s[i + 1] == c) || (s[i + 1] == '\0')))
-			j++;
-		i++;
-	}
-	return (j);
+	while (++i < n && s2[i])
+		s1[i] = s2[i];
+	s1[i] = '\0';
+	return s1;
 }
 
-int	ft_wordlen(char const *s, char c)
+char    **ft_split(char *str)
 {
-	int	i;
+	int	i = 0;
+	int	j = 0;
+	int	k = 0;
+	int	wc = 0;
 
-	i = 0;
-	while (s[i] && s[i] != c)
-		i++;
-	return (i);
-}
-
-char	*ft_str(int *i, char const *s, int j)
-{
-	char	*k;
-	int		l;
-
-	l = 0;
-	k = malloc(sizeof(char) * (j + 1));
-	if (!k)
-		return (NULL);
-	while (l < j)
+	while (str[i])
 	{
-		k[l] = s[*i];
-		l++;
-		(*i)++;
-	}
-	k[l] = 0;
-	return (k);
-}
-
-char	**ft_split(char const *s, char c)
-{
-	int		f;
-	int		i;
-	int		l;
-	char	**newfunc;
-	char	*k;
-
-	i = -1;
-	f = ft_count(s, c);
-	newfunc = malloc(sizeof(char *) * (f + 1));
-	if (!newfunc)
-		return (NULL);
-	l = 0;
-	while (s[++i])
-	{
-		if (s[i] != c)
-		{
-			k = ft_str(&i, s, ft_wordlen(s + i, c));
-			if (!k)
-				return (NULL);
-			newfunc[l++] = k;
-			i--;
-		}
-	}
-	newfunc[l] = NULL;
-	return (newfunc);
-}
-/*
-int	main(void)
-{
-	char const	*s = "hola como estas";
-	char		c = ' ';
-	char		**result = ft_split(s, c);
-
-	printf("%s\n", s);
-	if (result)
-	{
-		int i = 0;
-		while (result[i])
-		{
-			printf("%s\n", result[i]);
+		while (str[i] && (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'))
 			i++;
-		}
-		free(result);
+		if (str[i])
+			wc++;
+		while (str[i] && (str[i] != ' ' && str[i] != '\t' && str[i] != '\n'))
+			i++;
 	}
-	return (0);
-}*/
+	char	**out = malloc(sizeof(char *) * wc + 1);
+	i = 0;
+	while (str[i])
+	{
+		while (str[i] && (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'))
+			i++;
+		j = i;
+		while (str[i] && (str[i] != ' ' && str[i] != '\t' && str[i] != '\n'))
+			i++;
+		if (i > j)
+		{
+			out[k] = malloc(sizeof(char) * (i - j) + 1);
+			ft_strncpy(out[k++], &str[j], i - j);
+		}
+	}
+	out[k] = NULL;
+	return out;
+}
